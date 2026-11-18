@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -11,7 +12,7 @@ import { getAppItem } from '@/repository/app'
  * @param params 包含应用 ID 的参数对象
  * @returns 来自 Dify API 的应用参数
  */
-export async function GET(
+async function accountGET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string }> },
 ) {
@@ -40,3 +41,5 @@ export async function GET(
 		return NextResponse.json({ error: 'Failed to fetch app parameters' }, { status: 500 })
 	}
 }
+
+export const GET = withAccount(accountGET)

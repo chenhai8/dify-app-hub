@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 import { NextRequest } from 'next/server'
 
 import {
@@ -13,7 +14,7 @@ export const dynamic = 'force-dynamic'
 /**
  * 停止聊天消息生成
  */
-export async function POST(
+async function accountPOST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string; taskId: string }> },
 ) {
@@ -52,3 +53,5 @@ export async function POST(
 		)
 	}
 }
+
+export const POST = withAccount(accountPOST)

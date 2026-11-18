@@ -1,13 +1,12 @@
 import { useDifyChatStore } from '@/lib/core'
 import { useThemeContext } from '@/lib/theme'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import React from 'react'
 import data from '@emoji-mart/data'
 import { init } from 'emoji-mart'
 
 init({ data })
 
-import { completeFileUrl } from '@/components/chat/utils-index'
 import { useMount } from 'ahooks'
 
 /**
@@ -18,6 +17,7 @@ export default function AppIcon(props: { size?: 'small' | 'default'; hasContaine
 
 	const currentApp = useDifyChatStore(s => s.currentApp)
 	const { isDark } = useThemeContext()
+	const [failedImage, setFailedImage] = useState<string | null>(null)
 
 	// 初始化 emoji-mart
 	useMount(() => {
@@ -28,18 +28,30 @@ export default function AppIcon(props: { size?: 'small' | 'default'; hasContaine
 		return {
 			background: currentApp?.site?.icon_background || '#ffead5',
 			type: currentApp?.site?.icon_type || 'emoji',
-			icon: currentApp?.site?.icon_url
-				? completeFileUrl(currentApp?.site?.icon_url, currentApp?.config.requestConfig.apiBase)
-				: currentApp?.site?.icon || '🤖',
+			icon:
+				currentApp?.site?.icon_type === 'image' && currentApp?.site?.icon_url
+					? `/api/client/dify/${encodeURIComponent(currentApp.config.id)}/icon`
+					: currentApp?.site?.icon || '🤖',
 		}
 	}, [currentApp])
 
 	const renderIcon = useMemo(() => {
 		if (renderProps.type === 'image') {
+			if (failedImage === renderProps.icon)
+				return (
+					<span
+						role="img"
+						aria-label="助手图标"
+					>
+						🤖
+					</span>
+				)
 			return (
 				<img
 					className="inline-block h-full w-full"
 					src={renderProps.icon}
+					alt="助手图标"
+					onError={() => setFailedImage(renderProps.icon)}
 				/>
 			)
 		}
@@ -48,7 +60,7 @@ export default function AppIcon(props: { size?: 'small' | 'default'; hasContaine
 			| undefined
 		const native = emoji?.[renderProps.icon]?.skins?.[0]?.native
 		return native || renderProps.icon || '🤖'
-	}, [renderProps])
+	}, [renderProps, failedImage])
 
 	if (hasContainer) {
 		return renderIcon

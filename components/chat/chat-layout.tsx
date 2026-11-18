@@ -94,35 +94,42 @@ export default function ChatLayout(props: IChatLayoutProps) {
 	/**
 	 * 获取对话列表
 	 */
-	const getConversationItems = useEffectEvent(async (showLoading = true) => {
-		if (showLoading) {
-			setCoversationListLoading(true)
-		}
-		try {
-			const result = await difyApi?.listConversations()
-			const newItems =
-				result?.data?.map((item: any) => {
-					return {
-						key: item.id,
-						label: item.name,
-					}
-				}) || []
-			setConversations(result?.data || [])
-			// 避免闭包问题
-			if (!latestCurrentConversationId.current) {
-				if (newItems.length) {
-					setCurrentConversationId(newItems[0]?.key)
-				} else {
-					onAddConversation()
-				}
+	const getConversationItems = useEffectEvent(
+		async (showLoading = true, completedConversationId?: string) => {
+			// 首次回复返回正式 ID 后同步侧栏，避免临时会话使新增按钮一直禁用
+			if (completedConversationId) {
+				latestCurrentConversationId.current = completedConversationId
+				setCurrentConversationId(completedConversationId)
 			}
-		} catch (error) {
-			console.error(error)
-			message.error(`获取会话列表失败: ${error}`)
-		} finally {
-			setCoversationListLoading(false)
-		}
-	})
+			if (showLoading) {
+				setCoversationListLoading(true)
+			}
+			try {
+				const result = await difyApi?.listConversations()
+				const newItems =
+					result?.data?.map((item: any) => {
+						return {
+							key: item.id,
+							label: item.name,
+						}
+					}) || []
+				setConversations(result?.data || [])
+				// 避免闭包问题
+				if (!latestCurrentConversationId.current) {
+					if (newItems.length) {
+						setCurrentConversationId(newItems[0]?.key)
+					} else {
+						onAddConversation()
+					}
+				}
+			} catch (error) {
+				console.error(error)
+				message.error(`获取会话列表失败: ${error}`)
+			} finally {
+				setCoversationListLoading(false)
+			}
+		},
+	)
 
 	/**
 	 * 添加临时新对话(要到第一次服务器响应有效的对话 ID 时才真正地创建完成)

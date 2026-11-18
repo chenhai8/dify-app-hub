@@ -181,3 +181,5 @@ docker-compose*
 **/.pnpm-store/
 **/.yarn/
 **/.npm/
+
+offline-image/

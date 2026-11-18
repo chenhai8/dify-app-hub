@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest } from 'next/server'
@@ -13,7 +14,7 @@ import { getAppItem } from '@/repository/app'
 /**
  * 删除会话
  */
-export async function DELETE(
+async function accountDELETE(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string; conversationId: string }> },
 ) {
@@ -50,3 +51,5 @@ export async function DELETE(
 		)
 	}
 }
+
+export const DELETE = withAccount(accountDELETE)

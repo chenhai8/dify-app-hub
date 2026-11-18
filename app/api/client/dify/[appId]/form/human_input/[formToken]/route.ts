@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest } from 'next/server'
@@ -6,7 +7,7 @@ import { createDifyApiResponse, handleApiError, proxyDifyRequest } from '@/lib/a
 import { getAppItem } from '@/repository/app'
 import { getUserIdFromRequest } from '@/lib/api-utils'
 
-export async function POST(
+async function accountPOST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string; formToken: string }> },
 ) {
@@ -49,3 +50,5 @@ export async function POST(
 		)
 	}
 }
+
+export const POST = withAccount(accountPOST)

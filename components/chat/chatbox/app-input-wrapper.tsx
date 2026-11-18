@@ -1,7 +1,7 @@
 import { CaretRightOutlined } from '@ant-design/icons'
 import { useDifyChatStore } from '@/lib/core'
 import { isTempId } from '@/lib/helpers'
-import { Collapse, CollapseProps, theme } from 'antd'
+import { Collapse, CollapseProps, Form, theme } from 'antd'
 import { CSSProperties, useEffect, useMemo, useState } from 'react'
 
 import AppInputForm, { IAppInputFormProps } from './app-input-form'
@@ -44,12 +44,18 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 	}, [currentConversationId])
 
 	if (!currentApp?.parameters.user_input_form?.length) {
-		return null
+		return (
+			<Form
+				form={props.entryForm}
+				component={false}
+			/>
+		)
 	}
 
 	const getItems: (panelStyle: CSSProperties) => CollapseProps['items'] = panelStyle => [
 		{
 			key: COLLAPSE_KEY,
+			forceRender: true,
 			label: (
 				<div className="flex items-center">
 					<div className="text-base font-semibold">{t('chat.input_params_setting')}</div>

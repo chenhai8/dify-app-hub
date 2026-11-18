@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest } from 'next/server'
@@ -8,7 +9,7 @@ import { getAppItem } from '@/repository/app'
 /**
  * 提交消息反馈
  */
-export async function POST(
+async function accountPOST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string; messageId: string }> },
 ) {
@@ -58,3 +59,5 @@ export async function POST(
 		return handleApiError(error, `Error submitting feedback for ${resolvedParams.appId}`)
 	}
 }
+
+export const POST = withAccount(accountPOST)

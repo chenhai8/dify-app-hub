@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest } from 'next/server'
@@ -8,7 +9,7 @@ import { getAppItem } from '@/repository/app'
 /**
  * 获取应用站点设置
  */
-export async function GET(
+async function accountGET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string }> },
 ) {
@@ -35,3 +36,5 @@ export async function GET(
 		return handleApiError(error, `Error fetching app site settings for ${resolvedParams.appId}`)
 	}
 }
+
+export const GET = withAccount(accountGET)

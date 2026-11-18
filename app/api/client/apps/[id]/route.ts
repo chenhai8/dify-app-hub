@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { createSafeApp, handleApiError } from '@/lib/api-utils'
@@ -12,7 +13,7 @@ export const dynamic = 'force-dynamic'
  * @param params 包含应用 ID 的参数对象
  * @returns 应用详情，但不包含敏感的 API Key
  */
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+async function accountGET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const { id } = await params
 		const app = await getAppItem(id)
@@ -30,3 +31,5 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		return handleApiError(error, `Error fetching app ${resolvedParams.id} for client`)
 	}
 }
+
+export const GET = withAccount(accountGET)

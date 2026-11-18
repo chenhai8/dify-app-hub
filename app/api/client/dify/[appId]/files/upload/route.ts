@@ -1,14 +1,17 @@
+import { withAccount } from '@/lib/account-access'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest } from 'next/server'
 
 import { createDifyApiResponse, createFormDataProxy, handleApiError } from '@/lib/api-utils'
+import { getBoundUser } from '@/lib/account-request'
+import { recordUserFile } from '@/repository/user-files'
 import { getAppItem } from '@/repository/app'
 
 /**
  * 上传文件到 Dify
  */
-export async function POST(
+async function accountPOST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string }> },
 ) {
@@ -33,9 +36,14 @@ export async function POST(
 			body: proxyFormData,
 		})
 		const data = await response.json()
+		if (response.ok && typeof data.id === 'string') {
+			await recordUserFile(appId, data.id, getBoundUser(request))
+		}
 		return createDifyApiResponse(data, response.status)
 	} catch (error) {
 		const resolvedParams = await params
 		return handleApiError(error, `Error uploading file for ${resolvedParams.appId}`)
 	}
 }
+
+export const POST = withAccount(accountPOST)

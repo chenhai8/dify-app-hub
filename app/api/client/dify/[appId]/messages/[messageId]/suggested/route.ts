@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest } from 'next/server'
@@ -8,7 +9,7 @@ import { getAppItem } from '@/repository/app'
 /**
  * 获取消息建议
  */
-export async function GET(
+async function accountGET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string; messageId: string }> },
 ) {
@@ -41,3 +42,5 @@ export async function GET(
 		)
 	}
 }
+
+export const GET = withAccount(accountGET)

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { IDifyAppItem } from '@/types'
+import { getBoundUser } from '@/lib/account-request'
 
 /**
  * 统一的 API 错误处理
@@ -9,7 +10,7 @@ export function handleApiError(error: unknown, context: string) {
 	console.error(`${context}:`, error)
 
 	if (error instanceof Error) {
-		return NextResponse.json({ error: error.message }, { status: 500 })
+		return NextResponse.json({ error: '请求失败，请稍后重试' }, { status: 500 })
 	}
 
 	return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -110,9 +111,8 @@ export function createDifyApiResponse<T>(data: T, status = 200) {
 }
 
 /**
- * 从请求中获取用户ID（简化版本，实际项目中可能需要从session或token中获取）
+ * 读取路由鉴权后绑定的账号身份
  */
 export function getUserIdFromRequest(request: NextRequest): string {
-	// 这里简化处理，实际项目中应该从认证信息中获取
-	return request.headers.get('x-user-id') || 'anonymous'
+	return getBoundUser(request)
 }

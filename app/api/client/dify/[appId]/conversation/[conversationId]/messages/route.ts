@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { getAppItem } from '@/repository/app'
@@ -10,7 +11,7 @@ export const dynamic = 'force-dynamic'
  * @param params 包含应用 ID 和会话 ID 的参数对象
  * @returns 来自 Dify API 的会话消息历史
  */
-export async function GET(
+async function accountGET(
 	request: NextRequest,
 	{
 		params,
@@ -61,3 +62,5 @@ export async function GET(
 		return NextResponse.json({ error: 'Failed to fetch conversation messages' }, { status: 500 })
 	}
 }
+
+export const GET = withAccount(accountGET)

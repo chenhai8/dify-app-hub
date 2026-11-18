@@ -47,9 +47,20 @@ const useWorkflowStore = create<WorkflowStore>()(
 			name: 'workflow-data-storage',
 			storage: createJSONStorage(() => indexedDBStorage),
 			partialize: state => ({ data: state.data }),
+			skipHydration: true,
+			merge: (persisted, current) => ({
+				...current,
+				data: (persisted as Partial<WorkflowStore> | undefined)?.data ?? {},
+			}),
 		},
 	),
 )
+
+/** 在挂载聊天前切换到当前账号的缓存空间，忽略旧的匿名缓存 */
+export async function activateWorkflowCache(accountId: string): Promise<void> {
+	useWorkflowStore.persist.setOptions({ name: 'workflow-data-storage:' + accountId })
+	await useWorkflowStore.persist.rehydrate()
+}
 
 /**
  * 工作流数据存储，结合 zustand 状态管理和持久化

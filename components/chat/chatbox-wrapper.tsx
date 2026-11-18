@@ -24,7 +24,7 @@ interface IChatboxWrapperProps {
 	/**
 	 * 内部处理对话列表变更的函数
 	 */
-	conversationItemsChangeCallback: (showLoading?: boolean) => void
+	conversationItemsChangeCallback: (showLoading?: boolean, completedConversationId?: string) => void
 	/**
 	 * 添加对话
 	 */
@@ -46,7 +46,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		conversationItemsChangeCallback,
 		handleStartConfig,
 	} = props
-	const { currentConversationId, setCurrentConversationId } = useDifyChatStore()
+	const { currentConversationId } = useDifyChatStore()
 	const setConversations = useDifyChatStore(s => s.setConversations)
 	const conversations = useDifyChatStore(s => s.conversations)
 	const currentConversationInfo = conversations?.find(item => item.id === currentConversationId)
@@ -275,8 +275,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		filesRef,
 		onConversationIdChange: id => {
 			setMessagesloadingEnabled(false)
-			setCurrentConversationId(id)
-			conversationItemsChangeCallback()
+			conversationItemsChangeCallback(false, id)
 		},
 		entryForm,
 		onTaskIdChange: (newTaskId: string) => {

@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 import { NextRequest } from 'next/server'
 
 import { createDifyResponseProxy, getUserIdFromRequest } from '@/lib/api-utils'
@@ -8,7 +9,7 @@ export const dynamic = 'force-dynamic'
 /**
  * 发送完成消息（文本生成）
  */
-export async function POST(
+async function accountPOST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string }> },
 ) {
@@ -55,3 +56,5 @@ export async function POST(
 		})
 	}
 }
+
+export const POST = withAccount(accountPOST)

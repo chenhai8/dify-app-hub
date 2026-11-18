@@ -1,14 +1,15 @@
-import { LocalStorageKeys, LocalStorageStore } from '@/lib/helpers'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 export const useAuth = () => {
 	const router = useRouter()
-	const userId =
-		typeof window !== 'undefined' ? LocalStorageStore.get(LocalStorageKeys.USER_ID) : null
+	const { data: session, status } = useSession()
+	const userId = session?.user?.difyUserId || ''
 
 	return {
-		isAuthorized: !!userId,
-		goAuthorize: () => router.push('/auth'),
+		isAuthorized: status === 'authenticated' && !!userId,
+		loading: status === 'loading',
+		goAuthorize: () => router.push('/login'),
 		userId,
 	}
 }

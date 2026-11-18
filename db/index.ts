@@ -19,7 +19,7 @@ const createDb = () => {
 		throw new Error('DATABASE_URL 环境变量缺失, 请检查')
 	}
 
-	return drizzle(databaseUrl, { schema, logger: true } as any) as ReturnType<typeof drizzle>
+	return drizzle(databaseUrl, { schema, logger: false } as any) as ReturnType<typeof drizzle>
 }
 
 const globalForDb = globalThis as unknown as {

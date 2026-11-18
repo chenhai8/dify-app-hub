@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS `dify_apps` (
 	`id` varchar(191) PRIMARY KEY,
-	`created_at` datetime(3) NOT NULL DEFAULT (CURRENT_TIMESTAMP(3)),
+	`created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 	`updated_at` datetime(3) NOT NULL,
 	`name` varchar(191) NOT NULL,
 	`mode` varchar(191),
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 	`name` varchar(191),
 	`email` varchar(191) NOT NULL,
 	`password` varchar(191) NOT NULL,
-	`created_at` datetime(3) NOT NULL DEFAULT (CURRENT_TIMESTAMP(3)),
+	`created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 	`updated_at` datetime(3) NOT NULL,
 	CONSTRAINT `users_email_key` UNIQUE INDEX(`email`)
 );

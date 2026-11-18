@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest } from 'next/server'
@@ -14,7 +15,7 @@ import { getAppItem } from '@/repository/app'
 /**
  * 获取工作流运行结果
  */
-export async function GET(
+async function accountGET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string }> },
 ) {
@@ -51,7 +52,7 @@ export async function GET(
 /**
  * 运行工作流
  */
-export async function POST(
+async function accountPOST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string }> },
 ) {
@@ -98,3 +99,7 @@ export async function POST(
 		})
 	}
 }
+
+export const GET = withAccount(accountGET, true)
+
+export const POST = withAccount(accountPOST)

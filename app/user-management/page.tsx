@@ -11,6 +11,8 @@ interface User {
 	id: string
 	name: string | null
 	email: string
+	role: string
+	enabled: boolean
 	createdAt: string
 	updatedAt: string
 }
@@ -100,7 +102,14 @@ export default function UserManagementPage() {
 		{
 			title: '状态',
 			key: 'status',
-			render: () => <Tag color="green">正常</Tag>,
+			render: (_: unknown, record: User) => (
+				<Tag color={record.enabled ? 'green' : 'red'}>{record.enabled ? '正常' : '已停用'}</Tag>
+			),
+		},
+		{
+			title: '角色',
+			dataIndex: 'role',
+			render: (role: string) => (role === 'admin' ? '管理员' : '普通用户'),
 		},
 		{
 			title: '创建时间',

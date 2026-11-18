@@ -24,9 +24,20 @@ const useThinkTimeStore = create<ThinkTimeStore>()(
 			name: 'think-time-storage',
 			storage: createJSONStorage(() => indexedDBStorage),
 			partialize: state => ({ data: state.data }),
+			skipHydration: true,
+			merge: (persisted, current) => ({
+				...current,
+				data: (persisted as Partial<ThinkTimeStore> | undefined)?.data ?? {},
+			}),
 		},
 	),
 )
+
+/** 切换账号时隔离思考时长缓存，不加载匿名浏览器状态 */
+export async function activateThinkTimeCache(accountId: string): Promise<void> {
+	useThinkTimeStore.persist.setOptions({ name: 'think-time-storage:' + accountId })
+	await useThinkTimeStore.persist.rehydrate()
+}
 
 export const getThinkTime = (key: string) => useThinkTimeStore.getState().getTime(key)
 export const setThinkTime = (key: string, elapsedTime: number) =>

@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 import { NextResponse } from 'next/server'
 
 import { createSafeApp, handleApiError } from '@/lib/api-utils'
@@ -10,7 +11,7 @@ export const dynamic = 'force-dynamic'
  *
  * @returns 应用列表，但不包含敏感的 API Key
  */
-export async function GET() {
+async function accountGET() {
 	try {
 		const apps = await getAppList()
 
@@ -22,3 +23,5 @@ export async function GET() {
 		return handleApiError(error, 'Error fetching apps for client')
 	}
 }
+
+export const GET = withAccount(accountGET)

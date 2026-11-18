@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest } from 'next/server'
@@ -13,7 +14,7 @@ import { getAppItem } from '@/repository/app'
 /**
  * 重命名会话
  */
-export async function POST(
+async function accountPOST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string; conversationId: string }> },
 ) {
@@ -68,3 +69,5 @@ export async function POST(
 		)
 	}
 }
+
+export const POST = withAccount(accountPOST)

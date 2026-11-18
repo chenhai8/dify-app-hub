@@ -11,9 +11,9 @@ const nextConfig: NextConfig = {
 			{
 				source: '/:path*',
 				headers: [
-					// 支持跨域
-					{ key: 'Access-Control-Allow-Credentials', value: 'true' },
-					{ key: 'Access-Control-Allow-Origin', value: '*' },
+					// 助手使用同源登录，不开放跨域凭据
+					{ key: 'X-Content-Type-Options', value: 'nosniff' },
+					{ key: 'Referrer-Policy', value: 'same-origin' },
 					{ key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
 					{
 						key: 'Access-Control-Allow-Headers',

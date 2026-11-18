@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 import { NextRequest } from 'next/server'
 
 import { createDifyApiResponse, handleApiError, proxyDifyRequest } from '@/lib/api-utils'
@@ -8,7 +9,7 @@ export const dynamic = 'force-dynamic'
 /**
  * 创建标注
  */
-export async function POST(
+async function accountPOST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string }> },
 ) {
@@ -44,3 +45,5 @@ export async function POST(
 		return handleApiError(error, `Error creating annotation for ${resolvedParams.appId}`)
 	}
 }
+
+export const POST = withAccount(accountPOST, true)

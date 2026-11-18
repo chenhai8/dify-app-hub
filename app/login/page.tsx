@@ -36,7 +36,7 @@ export default function LoginPage() {
 				// 获取会话信息并跳转
 				const session = await getSession()
 				if (session) {
-					router.push('/')
+					window.location.assign('/apps')
 				}
 			}
 		} catch (error) {
@@ -103,9 +103,7 @@ export default function LoginPage() {
 							登录
 						</Button>
 					</Form.Item>
-					<div className="mb-2 text-right">
-						<a href="/forgot-password">忘记密码？</a>
-					</div>
+					<div className="mb-2 text-right text-sm">账号及密码请联系管理员</div>
 				</Form>
 			</Card>
 		</div>

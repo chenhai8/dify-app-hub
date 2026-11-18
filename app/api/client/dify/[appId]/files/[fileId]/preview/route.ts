@@ -1,20 +1,26 @@
+import { withAccount } from '@/lib/account-access'
 export const dynamic = 'force-dynamic'
 
 import { NextRequest } from 'next/server'
 
 import { handleApiError } from '@/lib/api-utils'
+import { getBoundUser } from '@/lib/account-request'
+import { ownsUserFile } from '@/repository/user-files'
 import { getAppItem } from '@/repository/app'
 
 /**
  * 文件预览/下载代理
  * 对应 Dify API: GET /files/{file_id}/preview
  */
-export async function GET(
+async function accountGET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string; fileId: string }> },
 ) {
 	try {
 		const { appId, fileId } = await params
+		if (!(await ownsUserFile(appId, fileId, getBoundUser(request)))) {
+			return Response.json({ error: 'File not found' }, { status: 404 })
+		}
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
@@ -62,3 +68,5 @@ export async function GET(
 		)
 	}
 }
+
+export const GET = withAccount(accountGET)

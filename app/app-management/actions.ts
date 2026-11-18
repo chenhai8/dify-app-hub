@@ -8,10 +8,12 @@ import {
 	updateApp as updateAppItem,
 } from '@/repository/app'
 import { IDifyAppItem } from '@/types'
+import { requireAccount } from '@/lib/account-access'
 
 import { maskApiKey4AppConfig } from './utils'
 
 export async function listApp({ isMask = false }: { isMask?: boolean } = {}) {
+	await requireAccount(true)
 	const res = await getAppListFromRepository()
 	if (isMask) {
 		const result = await Promise.all(
@@ -28,6 +30,7 @@ export async function listApp({ isMask = false }: { isMask?: boolean } = {}) {
  * 获取应用详情
  */
 export async function getApp(id: string, { isMask = false }: { isMask?: boolean } = {}) {
+	await requireAccount(true)
 	const res = await getAppItemFromRepository(id)
 	if (isMask && res) {
 		return await maskApiKey4AppConfig(res)
@@ -39,10 +42,12 @@ export async function getApp(id: string, { isMask = false }: { isMask?: boolean 
  * 删除应用
  */
 export async function deleteApp(id: string) {
+	await requireAccount(true)
 	return deleteAppItem(id)
 }
 
 export async function createApp(appItem: Omit<IDifyAppItem, 'id'>) {
+	await requireAccount(true)
 	const res = await addApp({
 		...appItem,
 	})
@@ -50,6 +55,7 @@ export async function createApp(appItem: Omit<IDifyAppItem, 'id'>) {
 }
 
 export async function updateApp(appItem: IDifyAppItem) {
+	await requireAccount(true)
 	try {
 		const res = await updateAppItem(appItem)
 		return res

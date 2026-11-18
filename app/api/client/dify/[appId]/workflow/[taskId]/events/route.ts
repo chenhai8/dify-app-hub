@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 import { NextRequest } from 'next/server'
 
 import { getAppItem } from '@/repository/app'
@@ -13,7 +14,7 @@ export const dynamic = 'force-dynamic'
  * @param params 包含应用 ID 和任务 ID 的参数对象
  * @returns SSE 流式响应
  */
-export async function GET(
+async function accountGET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string; taskId: string }> },
 ) {
@@ -83,3 +84,5 @@ export async function GET(
 		return new Response(JSON.stringify({ error: 'Failed to process request' }), { status: 500 })
 	}
 }
+
+export const GET = withAccount(accountGET)

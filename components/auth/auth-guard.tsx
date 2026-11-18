@@ -16,8 +16,10 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 	useEffect(() => {
 		if (status === 'loading') return // 仍在加载中
 
-		if (!session) {
+		if (!session?.user?.id) {
 			router.push('/login')
+		} else if (session.user.role !== 'admin') {
+			router.replace('/apps')
 		}
 	}, [session, status, router])
 
@@ -29,7 +31,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 		)
 	}
 
-	if (!session) {
+	if (!session?.user?.id || session.user.role !== 'admin') {
 		return null
 	}
 

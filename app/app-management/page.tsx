@@ -8,7 +8,7 @@ import { Button, message, Popconfirm, Space, Spin, Table, Tag } from 'antd'
 import Title from 'antd/es/typography/Title'
 import { useState } from 'react'
 
-import { addApp } from '@/repository/app'
+import { createApp as addApp } from './actions'
 
 import { deleteApp, getApp, listApp, updateApp } from './actions'
 import { AnnotationManagerDrawer } from './components/annotation-manager-drawer'

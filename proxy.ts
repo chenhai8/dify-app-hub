@@ -1,4 +1,3 @@
-// @ts-expect-error next-auth v4 jwt type resolution
 import { getToken } from 'next-auth/jwt'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
@@ -13,11 +12,22 @@ export async function proxy(request: NextRequest) {
 	// 允许访问初始化页面本身
 	if (pathname.startsWith('/init')) return NextResponse.next()
 
-	// 管理端路由鉴权
-	if (pathname.startsWith('/app-management') || pathname.startsWith('/user-management')) {
+	// 助手页面也要求真实登录，不能仅依赖浏览器本地身份
+	if (
+		pathname.startsWith('/app-management') ||
+		pathname.startsWith('/user-management') ||
+		pathname.startsWith('/apps') ||
+		pathname.startsWith('/chat')
+	) {
 		const token = await getToken({ req: request })
 		if (!token) {
 			return NextResponse.redirect(new URL('/login', request.url))
+		}
+		if (
+			(pathname.startsWith('/app-management') || pathname.startsWith('/user-management')) &&
+			token.role !== 'admin'
+		) {
+			return NextResponse.redirect(new URL('/apps', request.url))
 		}
 	}
 

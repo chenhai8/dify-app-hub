@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 
 import { getDb } from '@/db'
 import { users } from '@/db/schema'
+import { isCurrentAccount } from '@/lib/account-policy'
 
 export const authOptions = {
 	providers: [
@@ -26,7 +27,7 @@ export const authOptions = {
 					.limit(1)
 				const user = rows[0]
 
-				if (!user) {
+				if (!user || !user.enabled) {
 					return null
 				}
 
@@ -41,6 +42,8 @@ export const authOptions = {
 					email: user.email,
 					name: user.name,
 					sessionVersion: user.sessionVersion,
+					role: user.role,
+					difyUserId: user.difyUserId,
 				}
 			},
 		}),
@@ -57,20 +60,29 @@ export const authOptions = {
 			if (user) {
 				token.id = user.id
 				token.sessionVersion = user.sessionVersion
+				token.role = user.role
+				token.difyUserId = user.difyUserId
 				return token
 			}
 
 			if (token.id) {
 				const db = getDb()
 				const rows = await db
-					.select({ sessionVersion: users.sessionVersion })
+					.select({
+						sessionVersion: users.sessionVersion,
+						enabled: users.enabled,
+						role: users.role,
+						difyUserId: users.difyUserId,
+					})
 					.from(users)
 					.where(eq(users.id, token.id))
 					.limit(1)
 
-				if (!rows[0] || rows[0].sessionVersion !== token.sessionVersion) {
+				if (!isCurrentAccount(rows[0], token.sessionVersion)) {
 					return null
 				}
+				token.role = rows[0].role
+				token.difyUserId = rows[0].difyUserId
 			}
 			return token
 		},
@@ -78,6 +90,10 @@ export const authOptions = {
 		session({ session, token }: any) {
 			if (token && session.user) {
 				session.user.id = token.id as string
+				session.user.role = token.role
+				session.user.difyUserId = token.difyUserId
+			} else {
+				session.user = undefined
 			}
 			return session
 		},

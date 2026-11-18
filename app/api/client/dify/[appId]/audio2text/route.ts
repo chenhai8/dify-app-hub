@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 import { NextRequest } from 'next/server'
 
 import {
@@ -13,7 +14,7 @@ export const dynamic = 'force-dynamic'
 /**
  * 音频转文字
  */
-export async function POST(
+async function accountPOST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string }> },
 ) {
@@ -59,3 +60,5 @@ export async function POST(
 		return handleApiError(error, `Error converting audio to text for ${resolvedParams.appId}`)
 	}
 }
+
+export const POST = withAccount(accountPOST)

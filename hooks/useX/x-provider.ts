@@ -164,14 +164,16 @@ export class CustomProvider<
 			return originMessage as ChatMessage
 		}
 		if (parsedData.conversation_id && parsedData.conversation_id !== this.currentConversationId) {
-			this.currentConversationId = parsedData.conversation_id
 			const shouldTriggerConversationChange = [
 				EventEnum.MESSAGE,
 				EventEnum.AGENT_MESSAGE,
 				EventEnum.AGENT_THOUGHT,
 				EventEnum.MESSAGE_REPLACE,
+				EventEnum.MESSAGE_END,
 			].includes(parsedData.event as EventEnum)
 			if (shouldTriggerConversationChange) {
+				// 工作流前置事件不能提前消耗会话 ID 变更通知
+				this.currentConversationId = parsedData.conversation_id
 				this.onConversationIdChange?.(this.currentConversationId)
 			}
 		}

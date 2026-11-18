@@ -1,6 +1,6 @@
 import { mysqlTable, varchar, datetime, int, boolean, text } from 'drizzle-orm/mysql-core'
 import { sql } from 'drizzle-orm'
-import { generateUuidV4 } from '@/lib/helpers'
+import { generateUuidV4 } from '@/lib/helpers/id'
 
 export const difyApps = mysqlTable('dify_apps', {
 	id: varchar({ length: 36 })

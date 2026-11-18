@@ -1,12 +1,14 @@
 'use client'
 
-import { Button, Drawer, Form, Input, message, Space } from 'antd'
+import { Button, Drawer, Form, Input, message, Space, Select, Switch } from 'antd'
 import { useEffect, useState } from 'react'
 
 interface User {
 	id: string
 	name: string | null
 	email: string
+	role: string
+	enabled: boolean
 	createdAt: string
 	updatedAt: string
 }
@@ -21,6 +23,8 @@ interface UserEditDrawerProps {
 interface UserFormData {
 	name: string
 	email: string
+	role: string
+	enabled: boolean
 	password?: string
 }
 
@@ -40,6 +44,9 @@ export default function UserEditDrawer({
 				form.setFieldsValue({
 					name: user.name || '',
 					email: user.email,
+					role: user.role,
+					enabled: user.enabled,
+					password: undefined,
 				})
 			} else {
 				form.resetFields()
@@ -100,6 +107,7 @@ export default function UserEditDrawer({
 			<Form
 				form={form}
 				layout="vertical"
+				initialValues={{ role: 'user', enabled: true }}
 				onFinish={handleSubmit}
 			>
 				<Form.Item
@@ -121,13 +129,32 @@ export default function UserEditDrawer({
 					<Input placeholder="请输入邮箱地址" />
 				</Form.Item>
 
+				<Form.Item
+					name="role"
+					label="角色"
+					rules={[{ required: true }]}
+				>
+					<Select
+						options={[
+							{ value: 'user', label: '普通用户' },
+							{ value: 'admin', label: '管理员' },
+						]}
+					/>
+				</Form.Item>
+				<Form.Item
+					name="enabled"
+					label="启用账号"
+					valuePropName="checked"
+				>
+					<Switch />
+				</Form.Item>
 				{!isEditing && (
 					<Form.Item
 						name="password"
 						label="密码"
 						rules={[
 							{ required: true, message: '请输入密码' },
-							{ min: 6, message: '密码至少6位' },
+							{ min: 8, message: '密码至少8位' },
 						]}
 					>
 						<Input.Password placeholder="请输入密码" />
@@ -139,7 +166,7 @@ export default function UserEditDrawer({
 						name="password"
 						label="新密码"
 						help="留空则不修改密码"
-						rules={[{ min: 6, message: '密码至少6位' }]}
+						rules={[{ min: 8, message: '密码至少8位' }]}
 					>
 						<Input.Password placeholder="留空则不修改密码" />
 					</Form.Item>

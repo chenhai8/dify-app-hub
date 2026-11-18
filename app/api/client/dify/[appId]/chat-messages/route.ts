@@ -1,3 +1,4 @@
+import { withAccount } from '@/lib/account-access'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { getAppItem } from '@/repository/app'
@@ -11,7 +12,7 @@ export const dynamic = 'force-dynamic'
  * @param params 包含应用 ID 的参数对象
  * @returns 来自 Dify API 的响应
  */
-export async function POST(
+async function accountPOST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ appId: string }> },
 ) {
@@ -84,3 +85,5 @@ export async function POST(
 		return NextResponse.json({ error: 'Failed to process request' }, { status: 500 })
 	}
 }
+
+export const POST = withAccount(accountPOST)

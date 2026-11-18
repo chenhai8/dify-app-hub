@@ -1,0 +1,39 @@
+name: Build App Hub offline image
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/account-history-isolation
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build, check and export Linux amd64 image
+        shell: bash
+        run: bash docker/build-offline-image.sh "${GITHUB_SHA}"
+
+      - name: Upload offline image
+        uses: actions/upload-artifact@v4
+        with:
+          name: dify-app-hub-offline-amd64
+          path: |
+            offline-image/dify-app-hub-linux-amd64.tar.gz
+            offline-image/dify-app-hub-linux-amd64.tar.gz.sha256
+            offline-image/image.txt
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
